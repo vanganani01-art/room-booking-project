@@ -41,7 +41,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/admin-login", {
+      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/admin-login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -73,21 +73,21 @@ function App() {
   };
 
   const fetchRooms = () => {
-    fetch("http://localhost:5000/rooms")
+    fetch("https://room-booking-backend-7dcy.onrender.com/rooms")
       .then((res) => res.json())
       .then((data) => setRooms(data))
       .catch((err) => console.log(err));
   };
 
   const fetchBookings = () => {
-    fetch("http://localhost:5000/bookings")
+    fetch("https://room-booking-backend-7dcy.onrender.com/bookings")
       .then((res) => res.json())
       .then((data) => setBookings(data))
       .catch((err) => console.log(err));
   };
 
   const fetchMyBookings = () => {
-    let url = "http://localhost:5000/bookings";
+    let url = "https://room-booking-backend-7dcy.onrender.com/bookings";
 
     if (myBookingPhone.trim()) {
       url += `?phoneNumber=${myBookingPhone.trim()}`;
@@ -113,7 +113,7 @@ function App() {
     }
 
     fetch(
-      `http://localhost:5000/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
+      `https://room-booking-backend-7dcy.onrender.com/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
     )
       .then((res) => res.json())
       .then((data) => setBookedRoomIds(data))
@@ -208,7 +208,7 @@ Thank you for booking with us.`;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/add-room", {
+      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/add-room", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -245,7 +245,7 @@ Thank you for booking with us.`;
 
     try {
       const res = await fetch(
-        `http://localhost:5000/update-room-price/${editingRoom._id}`,
+        `https://room-booking-backend-7dcy.onrender.com/update-room-price/${editingRoom._id}`,
         {
           method: "PUT",
           headers: {
@@ -278,7 +278,7 @@ Thank you for booking with us.`;
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/delete-room/${roomId}`, {
+      const res = await fetch(`https://room-booking-backend-7dcy.onrender.com/delete-room/${roomId}`, {
         method: "DELETE"
       });
 
@@ -336,7 +336,7 @@ Thank you for booking with us.`;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/book-room", {
+      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/book-room", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -380,7 +380,7 @@ Thank you for booking with us.`;
 
     try {
       const res = await fetch(
-        `http://localhost:5000/cancel-booking/${bookingId}`,
+        `https://room-booking-backend-7dcy.onrender.com/cancel-booking/${bookingId}`,
         {
           method: "DELETE"
         }
