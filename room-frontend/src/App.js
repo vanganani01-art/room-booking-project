@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
+const API_URL = "https://room-booking-backend-7dcy.onrender.com";
+
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
@@ -41,7 +43,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/admin-login", {
+      const res = await fetch(`${API_URL}/admin-login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -73,21 +75,21 @@ function App() {
   };
 
   const fetchRooms = () => {
-    fetch("https://room-booking-backend-7dcy.onrender.com/rooms")
+    fetch(`${API_URL}/rooms`)
       .then((res) => res.json())
       .then((data) => setRooms(data))
       .catch((err) => console.log(err));
   };
 
   const fetchBookings = () => {
-    fetch("https://room-booking-backend-7dcy.onrender.com/bookings")
+    fetch(`${API_URL}/bookings`)
       .then((res) => res.json())
       .then((data) => setBookings(data))
       .catch((err) => console.log(err));
   };
 
   const fetchMyBookings = () => {
-    let url = "https://room-booking-backend-7dcy.onrender.com/bookings";
+    let url = `${API_URL}/bookings`;
 
     if (myBookingPhone.trim()) {
       url += `?phoneNumber=${myBookingPhone.trim()}`;
@@ -106,27 +108,23 @@ function App() {
       .catch((err) => console.log(err));
   };
 
-  const fetchBookedRoomsByDate = () => {
-    if (!globalFromDate || !globalToDate) {
-      setBookedRoomIds([]);
-      return;
-    }
-
-    fetch(
-      `https://room-booking-backend-7dcy.onrender.com/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
-    )
-      .then((res) => res.json())
-      .then((data) => setBookedRoomIds(data))
-      .catch((err) => console.log(err));
-  };
-
   useEffect(() => {
     fetchRooms();
     fetchBookings();
   }, []);
 
   useEffect(() => {
-    fetchBookedRoomsByDate();
+    if (!globalFromDate || !globalToDate) {
+      setBookedRoomIds([]);
+      return;
+    }
+
+    fetch(
+      `${API_URL}/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
+    )
+      .then((res) => res.json())
+      .then((data) => setBookedRoomIds(data))
+      .catch((err) => console.log(err));
   }, [globalFromDate, globalToDate]);
 
   const calculateDays = () => {
@@ -208,7 +206,7 @@ Thank you for booking with us.`;
     }
 
     try {
-      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/add-room", {
+      const res = await fetch(`${API_URL}/add-room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -244,18 +242,15 @@ Thank you for booking with us.`;
     }
 
     try {
-      const res = await fetch(
-        `https://room-booking-backend-7dcy.onrender.com/update-room-price/${editingRoom._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            price: Number(editPrice)
-          })
-        }
-      );
+      const res = await fetch(`${API_URL}/update-room-price/${editingRoom._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          price: Number(editPrice)
+        })
+      });
 
       const data = await res.text();
       alert(data);
@@ -278,7 +273,7 @@ Thank you for booking with us.`;
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`https://room-booking-backend-7dcy.onrender.com/delete-room/${roomId}`, {
+      const res = await fetch(`${API_URL}/delete-room/${roomId}`, {
         method: "DELETE"
       });
 
@@ -288,7 +283,15 @@ Thank you for booking with us.`;
       if (data === "Room and related bookings deleted successfully") {
         fetchRooms();
         fetchBookings();
-        fetchBookedRoomsByDate();
+
+        if (globalFromDate && globalToDate) {
+          fetch(
+            `${API_URL}/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
+          )
+            .then((res) => res.json())
+            .then((data) => setBookedRoomIds(data))
+            .catch((err) => console.log(err));
+        }
       }
     } catch (error) {
       console.log(error);
@@ -336,7 +339,7 @@ Thank you for booking with us.`;
     }
 
     try {
-      const res = await fetch("https://room-booking-backend-7dcy.onrender.com/book-room", {
+      const res = await fetch(`${API_URL}/book-room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -364,7 +367,13 @@ Thank you for booking with us.`;
         setNativePlace("");
         setPincode("");
         fetchBookings();
-        fetchBookedRoomsByDate();
+
+        fetch(
+          `${API_URL}/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
+        )
+          .then((res) => res.json())
+          .then((data) => setBookedRoomIds(data))
+          .catch((err) => console.log(err));
       }
     } catch (error) {
       console.log(error);
@@ -379,12 +388,9 @@ Thank you for booking with us.`;
     if (!confirmCancel) return;
 
     try {
-      const res = await fetch(
-        `https://room-booking-backend-7dcy.onrender.com/cancel-booking/${bookingId}`,
-        {
-          method: "DELETE"
-        }
-      );
+      const res = await fetch(`${API_URL}/cancel-booking/${bookingId}`, {
+        method: "DELETE"
+      });
 
       const data = await res.text();
       alert(data);
@@ -392,7 +398,15 @@ Thank you for booking with us.`;
       if (data === "Booking cancelled successfully") {
         fetchBookings();
         fetchMyBookings();
-        fetchBookedRoomsByDate();
+
+        if (globalFromDate && globalToDate) {
+          fetch(
+            `${API_URL}/booked-rooms?fromDate=${globalFromDate}&toDate=${globalToDate}`
+          )
+            .then((res) => res.json())
+            .then((data) => setBookedRoomIds(data))
+            .catch((err) => console.log(err));
+        }
       }
     } catch (error) {
       console.log(error);
@@ -400,6 +414,7 @@ Thank you for booking with us.`;
   };
 
   const days = calculateDays();
+
   const previewTotal =
     selectedRoom && days > 0 ? selectedRoom.price * days : 0;
 
